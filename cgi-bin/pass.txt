@@ -1,0 +1,4 @@
+dirhdfs: /hqqqqq
+mashdfs: /ss
+masterip: 192.168.43.247
+taskip: 192.168.43.248

@@ -1,0 +1,42 @@
+- hosts: localhost
+  tasks:
+    - package:
+        name: "python-pip"
+        state: present
+
+    - package:
+        name: "docker-ce"
+        state: present
+
+    - pip:
+        name: "docker-py"
+        state: present
+
+    - service:
+        name: "docker"
+        state: started
+
+#    - docker_image:
+#        name: shellinaboxd
+#        tag: v2
+#        load_path: /root/rhel7_5_software_extras/centos-latest.tar
+#        state: present
+    - docker_container:
+         name: "caas1"
+         image: "shellinaboxd:v2"
+         interactive: true
+         state: started
+         ports:
+            - "5555:4200"
+         privileged: yes
+         ipc_mode: host
+         tty: true
+         detach: true
+         env: DISPLAY=$DISPLAY
+         tmpfs: /tmp/.X11-unix
+#        name: "caas"
+#        image: "shellinaboxd:v2"
+#        interactive: true
+#        state: present
+#        exposed_ports: 4200
+

@@ -1,0 +1,39 @@
+- hosts: localhost 
+  tasks:
+#    - package:
+#        name: "python-pip"
+#        state: present
+
+ #   - package:
+ #       name: "docker-ce"
+#        state: present
+
+#    - pip:
+#        name: "docker-py"
+#        state: present
+
+    - service:
+        name: "docker"
+        state: started
+
+#   - docker_image:
+#        name: shellinaboxd
+#        tag: v2
+#        load_path: /root/rhel7_5_software_extras/centos-latest.tar
+#        state: present
+
+    - docker_container:
+         name: "saas1"
+         image: "xpra_firefox:v1"
+         interactive: true
+         state: started
+         ports: 
+            - "3322:3333"
+         privileged: yes
+         ipc_mode: host
+         tty: true
+         detach: true
+         env: DISPLAY=$DISPLAY
+         tmpfs: /tmp/.X11-unix
+
+

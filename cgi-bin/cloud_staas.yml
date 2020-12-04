@@ -1,0 +1,45 @@
+#- hosts: localhost
+#  tasks:
+#  - include_vars: "/code/cloud_staas_ansible.txt"
+#
+#  - parted: 
+#     device: /dev/sdb
+#    number: "1"
+#     state: present 
+#     part_end: 3000MiB
+#  - lvg:
+#     vg: myvg
+ #    pvs: /dev/sdb1
+#  - lvol:
+#     vg: myvg
+#     lv: mylv
+#     size: "{{size}}M"
+#     pvs: /dev/sdb1
+#  - filesystem:
+#     fstype: ext4    
+#     dev: /dev/myvg/mylv 
+#  - mount: 
+
+#     path: /cloud/shivi
+#     src: /dev/myvg/mylv
+#     fstype: ext4
+#     state: mounted
+
+
+
+
+- hosts: grp 
+  tasks:
+    - include_vars: "/code/cloud_staas_ansible.txt"
+    - file:
+        path: "/media/{{mk_name}}"
+        state: directory
+        mode: 0700
+
+#    - mount:
+#        path: "/media/dropbox1"
+#        state: present
+#        src: "192.168.43.181:/cloud/shivi"
+#        fstype: ext4
+
+    - command: "mount 192.168.43.181:/cloud/shivi /media/{{mk_name}}"

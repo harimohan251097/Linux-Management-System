@@ -1,0 +1,106 @@
+- hosts: master
+  tasks:
+   - include_vars: "/var/www/cgi-bin/pass.txt"
+   - command: "rpm -ivh /root/jdk-8u171-linux-x64.rpm"  
+     register: injdk
+     command_warnings: false
+     ignore_errors: yes
+     no_log: yes
+   - debug:
+      msg: "{{ injdk }}"
+   
+   - command: "rpm -ivh /root/hadoop-1.2.1-1.x86_64.rpm"  
+     register: inhad
+     ignore_errors: yes
+     no_log: yes
+   - debug:
+      msg: "{{ inhad }}"
+
+
+   - copy:
+      dest: /etc/hadoop/hdfs-site.xml
+      content: '<?xml version="1.0"?>
+
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+
+<!-- Put site-specific property overrides in this file. -->
+
+
+<configuration>
+
+<property>
+
+<name>dfs.name.dir</name>
+
+<value>{{ mashdfs }}</value>
+
+</property>
+
+
+</configuration>'
+     
+
+   - copy:
+      dest: /etc/hadoop/mapred-site.xml
+      content: '<?xml version="1.0"?>
+
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+
+<!-- Put site-specific property overrides in this file. -->
+
+
+<configuration>
+
+<property>
+
+<name>mapred.job.tracker</name>
+
+<value>{{ taskip }}:9002</value>
+
+</property>
+
+
+
+</configuration>'
+     
+
+   - copy:
+      dest: /etc/hadoop/core-site.xml
+      content: '<?xml version="1.0"?>
+
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+
+<!-- Put site-specific property overrides in this file. -->
+
+
+<configuration>
+
+<property>
+
+<name>fs.default.name</name>
+
+<value>hdfs://{{ masterip }}:9001</value>
+
+</property>
+
+
+</configuration>'
+     
+   - file:
+      name: "{{ mashdfs }}"
+      state: directory        
+   - command: "echo Y | hadoop namenode -format"  
+     ignore_errors: yes
+   - service:
+      name: firewalld
+      state: stopped
+   - command: "setenforce 0"
+   - command: "hadoop-daemon.sh start namenode"
+     ignore_errors: yes
+   - command: jps
+     register: jps1
+   - debug:
+      msg: "{{ jps1 }}"
